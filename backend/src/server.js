@@ -7,12 +7,14 @@ const authRoutes = require('./routes/auth.routes');
 
 const app = express();
 
+
 // --- Middlewares גלובליים ---
 app.use(cors()); // מאפשר ל-Frontend לגשת לשרת
 app.use(express.json()); // מאפשר לשרת לקרוא JSON מגוף הבקשה (req.body)
 
 // --- חיבור ה-Routes ---
 // כל הנתיבים של ה-Auth יתחילו ב- /api/auth
+console.log("Loading Auth Routes...");
 app.use('/api/auth', authRoutes);
 
 // נתיב בדיקה בסיסי כדי לראות שהשרת חי

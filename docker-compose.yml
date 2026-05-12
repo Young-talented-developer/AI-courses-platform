@@ -1,18 +1,33 @@
 services:
+  # שירות מסד הנתונים
   db:
     image: postgres:15-alpine
     container_name: ai_courses_db
     restart: always
     environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: password123
-      POSTGRES_DB: ai_courses_platform
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
     ports:
-      - "5432:5432"
+      - "${DB_PORT}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
-   
+  # שירות ה-Backend
+  backend:
+    build: ./backend
+    container_name: ai_courses_backend
+    restart: always
+    ports:
+      - "${SERVER_PORT}:${SERVER_PORT}"
+      - "5555:5555"
+    environment:
+      # חיבור ל-DB בתוך הרשת של דוקר (משתמש בשם השירות 'db')
+      DATABASE_URL: postgresql://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}?schema=public
+      JWT_SECRET: ${JWT_SECRET}
+      PORT: ${SERVER_PORT}
+    depends_on:
+      - db
 
 volumes:
   postgres_data:
