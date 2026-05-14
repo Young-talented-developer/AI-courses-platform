@@ -60,6 +60,38 @@ const promptController = {
       });
     }
   },
+
+  getUserLessons: async (req, res) => {
+    try {
+      if (!req.user) {
+        return res.status(401).json({
+          success: false,
+          message: 'Unauthorized: token missing or invalid',
+        });
+      }
+
+      const userId = req.user.userId || req.user.id;
+      if (!userId) {
+        return res.status(401).json({
+          success: false,
+          message: 'Unauthorized: invalid token payload',
+        });
+      }
+
+      const lessons = await promptService.getLessonsByUser(userId);
+
+      return res.status(200).json({
+        success: true,
+        lessons,
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  },
 };
 
 module.exports = promptController;

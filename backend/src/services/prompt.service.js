@@ -166,6 +166,31 @@ Never answer unrelated topics.
 
     return lesson;
   },
+
+  getLessonsByUser: async (userId) => {
+    if (!userId || !Number.isInteger(userId) || userId <= 0) {
+      throw new Error("Invalid user ID");
+    }
+
+    return await prisma.prompt.findMany({
+      where: { userId },
+      orderBy: { createdAt: "desc" },
+      include: {
+        category: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        subCategory: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    });
+  },
 };
 
 module.exports = promptService;

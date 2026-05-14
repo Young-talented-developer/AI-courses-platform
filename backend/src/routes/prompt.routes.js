@@ -14,4 +14,10 @@ router.post(
   promptController.createLesson
 );
 
+router.get(
+  "/lessons",
+  authMiddleware,
+  promptController.getUserLessons
+);
+
 module.exports = router;
