@@ -1,5 +1,4 @@
 services:
-  # שירות מסד הנתונים
   db:
     image: postgres:15-alpine
     container_name: ai_courses_db
@@ -13,21 +12,28 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
-  # שירות ה-Backend
   backend:
     build: ./backend
     container_name: ai_courses_backend
     restart: always
     ports:
       - "${SERVER_PORT}:${SERVER_PORT}"
-      - "5555:5555"
+      - "5000:5000"
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
     environment:
-      # חיבור ל-DB בתוך הרשת של דוקר (משתמש בשם השירות 'db')
-      DATABASE_URL: postgresql://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}?schema=public
-      JWT_SECRET: ${JWT_SECRET}
-      PORT: ${SERVER_PORT}
+      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}?schema=public
+      - JWT_SECRET=${JWT_SECRET}
+      - PORT=${SERVER_PORT}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - GOOGLE_GEMINI_API_KEY=${GOOGLE_GEMINI_API_KEY}
+      - NODE_TLS_REJECT_UNAUTHORIZED=0
     depends_on:
       - db
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
 
 volumes:
   postgres_data:
