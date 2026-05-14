@@ -3,6 +3,7 @@
 const prisma = require("../config/prisma");
 
 const aiService = require("./ai.service");
+const { validatePromptText, validateId } = require("../validatores/validators");
 
 const promptService = {
 
@@ -17,9 +18,15 @@ const promptService = {
     // Validation
     // =========================
 
-    if (!promptText || promptText.trim().length < 3) {
-      throw new Error("Prompt is required");
+    // Validate userId
+    if (!userId || !Number.isInteger(userId) || userId <= 0) {
+      throw new Error("Invalid user ID");
     }
+
+    // Validate inputs using utility functions
+    const validatedPromptText = validatePromptText(promptText);
+    const validatedCategoryId = validateId(categoryId, "Category ID");
+    const validatedSubCategoryId = validateId(subCategoryId, "SubCategory ID");
 
     // =========================
     // Find category
@@ -28,7 +35,7 @@ const promptService = {
     const category =
       await prisma.category.findUnique({
         where: {
-          id: categoryId,
+          id: validatedCategoryId,
         },
       });
 
@@ -43,7 +50,7 @@ const promptService = {
     const subCategory =
       await prisma.subCategory.findUnique({
         where: {
-          id: subCategoryId,
+          id: validatedSubCategoryId,
         },
       });
 
@@ -76,7 +83,7 @@ Sub Category:
 ${subCategory.name}
 
 Student Request:
-${promptText}
+${validatedPromptText}
 
 Requirements:
 - Only teach the requested topic
@@ -147,11 +154,11 @@ Never answer unrelated topics.
 
           userId,
 
-          categoryId,
+          categoryId: validatedCategoryId,
 
-          subCategoryId,
+          subCategoryId: validatedSubCategoryId,
 
-          promptText,
+          promptText: validatedPromptText,
 
           aiResponse,
         },
