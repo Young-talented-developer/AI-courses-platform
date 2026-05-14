@@ -191,6 +191,33 @@ Never answer unrelated topics.
       },
     });
   },
+
+  getAllLessons: async () => {
+    return await prisma.prompt.findMany({
+      orderBy: { createdAt: "desc" },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            phone: true,
+          },
+        },
+        category: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        subCategory: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    });
+  },
 };
 
 module.exports = promptService;

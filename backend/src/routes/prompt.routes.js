@@ -20,4 +20,10 @@ router.get(
   promptController.getUserLessons
 );
 
+router.get(
+  "/admin/all-lessons",
+  authMiddleware,
+  promptController.getAllLessons
+);
+
 module.exports = router;

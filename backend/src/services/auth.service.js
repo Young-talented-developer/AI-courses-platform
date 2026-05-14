@@ -5,7 +5,7 @@ const userRepository = require('../repositories/user.repository');
 const { validateName, validatePhone, validatePassword } = require('../validatores/validators');
 
 class AuthService {
-  async registerUser(name, phone, password) {
+  async registerUser(name, phone, password, isAdmin = false) {
     // Validate inputs
     const validatedName = validateName(name);
     const validatedPhone = validatePhone(phone);
@@ -21,7 +21,8 @@ class AuthService {
     return await userRepository.create({
       name: validatedName,
       phone: validatedPhone,
-      password: hashedPassword
+      password: hashedPassword,
+      isAdmin: Boolean(isAdmin)
     });
   }
 

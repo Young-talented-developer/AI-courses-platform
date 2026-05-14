@@ -92,6 +92,50 @@ const promptController = {
       });
     }
   },
+
+  getAllLessons: async (req, res) => {
+    try {
+      if (!req.user) {
+        return res.status(401).json({
+          success: false,
+          message: 'Unauthorized: token missing or invalid',
+        });
+      }
+
+      const userId = req.user.userId || req.user.id;
+      if (!userId) {
+        return res.status(401).json({
+          success: false,
+          message: 'Unauthorized: invalid token payload',
+        });
+      }
+
+      // Get user info to check if admin
+      const prisma = require("../config/prisma");
+      const user = await prisma.user.findUnique({ where: { id: userId } });
+
+      if (!user || !user.isAdmin) {
+        return res.status(403).json({
+          success: false,
+          message: 'Forbidden: Only admins can view all lessons',
+        });
+      }
+
+      const lessons = await promptService.getAllLessons();
+
+      return res.status(200).json({
+        success: true,
+        lessons,
+        total: lessons.length,
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  },
 };
 
 module.exports = promptController;
