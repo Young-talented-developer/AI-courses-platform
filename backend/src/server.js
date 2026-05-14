@@ -5,6 +5,7 @@ const cors = require('cors');
 // ייבוא ה-Routes (נתיבים)
 const authRoutes = require('./routes/auth.routes');
 const promptRoutes = require("./routes/prompt.routes");
+const categoryRoutes = require("./routes/category.routes");
 
 const app = express();
 
@@ -19,6 +20,9 @@ app.use("/api/prompts", promptRoutes);
 // כל הנתיבים של ה-Auth יתחילו ב- /api/auth
 console.log("Loading Auth Routes...");
 app.use('/api/auth', authRoutes);
+
+// Categories
+app.use('/api/categories', categoryRoutes);
 
 // נתיב בדיקה בסיסי כדי לראות שהשרת חי
 app.get('/health', (req, res) => {
