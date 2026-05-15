@@ -62,10 +62,10 @@ const users = [
 ];
 
 async function main() {
-  console.log('🌱 Starting database seed...');
+  console.log('Starting database seed...');
 
   // Hash passwords and create users
-  console.log('👥 Creating users...');
+  console.log('Creating users...');
   for (const userData of users) {
     const hashedPassword = await bcrypt.hash(userData.password, 10);
     await prisma.user.create({
@@ -76,19 +76,19 @@ async function main() {
         isAdmin: userData.isAdmin
       }
     });
-    console.log(`   ✓ Created user: ${userData.name} (${userData.phone})`);
+    console.log(`   Created user: ${userData.name} (${userData.phone})`);
   }
 
-  console.log('✅ Database seeded successfully!');
+  console.log('Database seeded successfully!');
   console.log('');
-  console.log('📝 Login credentials:');
+  console.log('Login credentials:');
   console.log('   Admin: phone: 0501234567, password: Admin@2024Secure!');
   console.log('   User:  phone: 0512345678, password: DannyC#2024');
 }
 
 main()
   .catch((e) => {
-    console.error('❌ Error seeding database:', e);
+    console.error('Error seeding database:', e);
     process.exit(1);
   })
   .finally(async () => {
