@@ -49,6 +49,50 @@ class AuthController {
       res.status(500).json({ error: error.message });
     }
   }
+
+  async getAllUsers(req, res) {
+    try {
+      if (!req.user) {
+        return res.status(401).json({
+          success: false,
+          message: 'Unauthorized: token missing or invalid',
+        });
+      }
+
+      const userId = req.user.userId || req.user.id;
+      if (!userId) {
+        return res.status(401).json({
+          success: false,
+          message: 'Unauthorized: invalid token payload',
+        });
+      }
+
+      // Check if user is admin
+      const prisma = require("../config/prisma");
+      const user = await prisma.user.findUnique({ where: { id: userId } });
+
+      if (!user || !user.isAdmin) {
+        return res.status(403).json({
+          success: false,
+          message: 'Forbidden: Only admins can view all users',
+        });
+      }
+
+      const users = await authService.getAllUsers();
+
+      return res.status(200).json({
+        success: true,
+        users,
+        total: users.length,
+      });
+    } catch (error) {
+      console.error('Error in getAllUsers:', error);
+      return res.status(500).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  }
 }
 
 module.exports = new AuthController();

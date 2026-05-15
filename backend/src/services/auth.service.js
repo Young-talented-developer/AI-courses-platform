@@ -39,6 +39,10 @@ class AuthService {
   generateToken(userId) {
     return jwt.sign({ userId }, config.jwtSecret, { expiresIn: config.jwtExpiration });
   }
+
+  async getAllUsers() {
+    return await userRepository.findAll();
+  }
 }
 
 module.exports = new AuthService();
