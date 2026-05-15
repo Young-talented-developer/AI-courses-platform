@@ -14,8 +14,15 @@ COPY . .
 # שלב 5: יצירת Prisma Client
 RUN npx prisma generate
 
-# שלב 6: חשיפת הפורט
+# שלב 6: התקנת netcat לבדיקת זמינות ה-DB
+RUN apk add --no-cache netcat-openbsd
+
+# שלב 7: העתקת סקריפט האתחול
+COPY prisma/init-db.sh /init-db.sh
+RUN chmod +x /init-db.sh
+
+# שלב 8: חשיפת הפורט
 EXPOSE 5000
 
-# שלב 7: הרצה עם migration
-CMD ["sh", "-c", "npx prisma migrate deploy && npm start"]
+# שלב 9: הרצה עם אתחול מסד הנתונים וזריעת נתוני דמה
+CMD ["/init-db.sh"]
