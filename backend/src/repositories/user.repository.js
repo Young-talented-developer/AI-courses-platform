@@ -36,8 +36,7 @@ class UserRepository {
           },
           orderBy: { createdAt: 'desc' }
         }
-      },
-      orderBy: { createdAt: 'desc' }
+      }
     });
   }
 }

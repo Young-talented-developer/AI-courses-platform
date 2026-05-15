@@ -17,6 +17,5 @@ RUN npx prisma generate
 # שלב 6: חשיפת הפורט
 EXPOSE 5000
 
-
-# שלב 7: הרצה
-CMD ["npm", "start"]
+# שלב 7: הרצה עם migration
+CMD ["sh", "-c", "npx prisma migrate deploy && npm start"]

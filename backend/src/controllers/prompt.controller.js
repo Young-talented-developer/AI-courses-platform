@@ -10,9 +10,12 @@ const promptController = {
     try {
 
       const {
+        category,
+        subCategory,
+        prompt,
+        promptText,
         categoryId,
         subCategoryId,
-        promptText,
       } = req.body;
 
       if (!req.user) {
@@ -30,19 +33,23 @@ const promptController = {
         });
       }
 
-      if (!categoryId || !subCategoryId || !promptText) {
+      const categoryValue = category?.id ?? categoryId;
+      const subCategoryValue = subCategory?.id ?? subCategoryId;
+      const promptValue = prompt ?? promptText;
+
+      if (!categoryValue || !subCategoryValue || !promptValue) {
         return res.status(400).json({
           success: false,
-          message: 'categoryId, subCategoryId and promptText are required',
+          message: 'Category, subCategory and prompt are required',
         });
       }
 
       const lesson =
         await promptService.createLesson(
           userId,
-          categoryId,
-          subCategoryId,
-          promptText
+          categoryValue,
+          subCategoryValue,
+          promptValue
         );
 
       return res.status(201).json({
@@ -51,10 +58,25 @@ const promptController = {
       });
 
     } catch (error) {
-
       console.error(error);
 
-      return res.status(500).json({
+      const clientErrorMessages = [
+        'Invalid user ID',
+        'Invalid Category ID',
+        'Invalid SubCategory ID',
+        'Category not found',
+        'Sub category not found',
+        'Sub category does not belong to category',
+        'Prompt text is required',
+        'Prompt must be at least 5 characters',
+        'Prompt must be less than 2000 characters',
+      ];
+
+      const isClientError = clientErrorMessages.some((msg) =>
+        error.message.includes(msg)
+      );
+
+      return res.status(isClientError ? 400 : 500).json({
         success: false,
         message: error.message,
       });

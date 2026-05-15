@@ -3,7 +3,7 @@ const authService = require('../services/auth.service');
 class AuthController {
   async register(req, res) {
     try {
-      const { name, phone, password, isAdmin } = req.body;
+      const { name, phone, password } = req.body;
 
       // Validate required fields
       if (!name || !phone || !password) {
@@ -12,11 +12,12 @@ class AuthController {
         });
       }
 
-      const user = await authService.registerUser(name, phone, password, isAdmin);
+      const user = await authService.registerUser(name, phone, password, false);
+      const token = authService.generateToken(user.id);
       res.status(201).json({ 
         message: "User registered successfully", 
-        userId: user.id,
-        isAdmin: user.isAdmin
+        token,
+        user: { id: user.id, name: user.name, isAdmin: user.isAdmin }
       });
     } catch (error) {
       res.status(400).json({ error: error.message });
