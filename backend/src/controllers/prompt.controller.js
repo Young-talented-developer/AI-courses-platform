@@ -129,7 +129,7 @@ const promptController = {
         total: lessons.length,
       });
     } catch (error) {
-      console.error(error);
+      console.error('Error in getAllLessons:', error);
       return res.status(500).json({
         success: false,
         message: error.message,
